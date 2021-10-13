@@ -1,26 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, memo, lazy } from 'react'
+import './App.module.scss'
+import { Redirect, Route, Switch } from 'react-router'
+import { Login } from './Components/Login/Login'
+import { withSuspend } from './HOC/withSuspend'
 
-function App() {
+const ChatLazy = lazy(() => import('./Components/Chat/Chat')),
+      SuspendedCats = withSuspend(ChatLazy)
+
+export const App: FC<{  }> = memo(({  }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+    <main>
+      <Switch>
+        <Route exact render={() => <Redirect to={'/auth'} />} path='/' />
+        <Route render={() => <Login />} path='/auth' />
+        <Route render={() => <SuspendedCats />} path='/chat' />
+      </Switch>
+    </main>
+  )
+})
