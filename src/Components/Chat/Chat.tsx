@@ -9,7 +9,7 @@ const Chat: FC<{}> = memo(({  }) => {
     return (
         <section>
             <div className={s.messages}>
-
+                
             </div>
             <div className={s.sender}>
                 <textarea />
