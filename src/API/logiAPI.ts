@@ -1,9 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export type AuthTypeResponse = {
-    isAuth: boolean
-    errorMessage: string
-    userName: string
+    data: {
+      isAuth: boolean
+      errorMessage: string
+      userName: string
+    }
 }
 
 export type AuthTypeRquest = {
@@ -17,8 +19,15 @@ export const authAPI = createApi({
       baseUrl: 'http://localhost:3500'
     }),
     endpoints: builder => ({
-      auth: builder.query<AuthTypeResponse, AuthTypeRquest>({
-        query: authData => ({url: `auth/${authData}`})
+      auth: builder.mutation<AuthTypeResponse, AuthTypeRquest>({
+        query: authData => ({
+          url: `/auth/${JSON.stringify(authData)}`,
+          method: 'GET'
+        })
       })
     })
 })
+
+export const {
+  useAuthMutation
+} = authAPI

@@ -27,7 +27,8 @@ export const loginSlice = createSlice({
 })
 
 export const {
-    setIsAuth
+    setIsAuth,
+    setUserName
 } = loginSlice.actions
 
 export default loginSlice.reducer
