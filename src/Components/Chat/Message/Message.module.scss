@@ -1,0 +1,25 @@
+.message {
+    margin-bottom: 5px;
+    color: #FFFFFF;
+    background: #3B3F49;
+    width: 80%;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    .userName {
+        border-bottom: 2px dashed #FFFFFF;
+        padding: 3px;
+    }
+    .text {
+        padding: 5px;
+    }
+}
+
+.mine {
+    text-align: right;
+    margin-left: 20%;
+    background: #b6b8bb;
+    border-top-right-radius: 0;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 5px;
+}

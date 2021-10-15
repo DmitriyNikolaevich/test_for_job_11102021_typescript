@@ -9,8 +9,6 @@ let mapStateToPropsForRedirect = (state: RootState) => ({
 
 export function withAuthRedirect<WCP>(Component: React.ComponentType<WCP>) {
 
-    
-
     const RedirectComponent: React.FC<MapPropsType> = (props) => {
 
             let {isAuth, ...restProps } = props
