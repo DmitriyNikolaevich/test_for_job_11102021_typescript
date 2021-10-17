@@ -22,7 +22,8 @@ export const authAPI = createApi({
       auth: builder.mutation<AuthTypeResponse, AuthTypeRquest>({
         query: authData => ({
           url: `/auth/${JSON.stringify(authData)}`,
-          method: 'GET'
+          method: 'GET',
+          mode: 'no-cors'
         })
       })
     })
