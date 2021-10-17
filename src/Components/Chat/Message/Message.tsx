@@ -9,7 +9,7 @@ export const Message: FC<{ message: MessageType, mine: boolean }> = memo(({ mess
                 {message.userName}
             </div>
             <div className={s.text}>
-                {message.message}
+                <span>{message.message}</span>
             </div>
         </div>
     )

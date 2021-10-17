@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    width: 0px;
+}
+
 section {
     width: 300px;
     height: 100%;
@@ -5,6 +9,9 @@ section {
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
+    position: relative;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     .messages {
         width: 100%;
         height: calc(100% - 60px);
@@ -14,6 +21,7 @@ section {
         margin-bottom: 2px;
         display: flex;
         flex-direction: column-reverse;
+        overflow-y: auto;
     }
     .sender {
         width: 100%;
@@ -29,6 +37,7 @@ section {
             border-bottom-left-radius: 5px;
         }
         div {
+            cursor: pointer;
             height: 100%;
             width: 10%;
             border-left: 1px solid #000000;
@@ -39,5 +48,27 @@ section {
                 width: 50%;
             }
         }
+    }
+    .emoji {
+        position: fixed;
+        bottom: 70px;
+        padding: 0;
+        .layout {
+            position: absolute;
+            width: 300vw;
+            height: 300vh;
+            top: -100%;
+            left: -100%;
+        }
+    }
+    .loggedInUsers {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-height: 135px;
+        display: flex;
+        flex-direction: column-reverse;
+        overflow-y: hidden;
     }
 }

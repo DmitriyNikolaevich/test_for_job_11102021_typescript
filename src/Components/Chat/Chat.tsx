@@ -9,64 +9,110 @@ import { addMessage, chatSelector, loadChat, MessageType } from './chatSlice'
 import { loginSelector } from '../Login/loginSlice'
 import { Message } from './Message/Message'
 import { io } from 'socket.io-client'
+import { socket } from '../../WS/socket'
+import { LoggedInUser } from './LoggedInUser/LoggedInUser'
+import EmojiPicker from 'emoji-picker-react'
 
-const Chat: FC<{  }> = ({  }) => {
+const Chat: FC<{}> = ({ }) => {
 
     const dispatch = useAppDispatch()
 
-    let socket;
+    const scrollRef = useRef(null)
 
     const { messages } = useAppSelector(chatSelector),
-            { userName } = useAppSelector(loginSelector)
+        { userName } = useAppSelector(loginSelector)
 
-    const [message, setMessage] = useState<string>('')
-    
-    console.log('Chat')
-    
-
-    socket.on("connect_error", (error) => {
-        console.log(error)
-    })
-
-    socket.on('chatHistory', (data: MessageType[]) => {
-        dispatch(loadChat(data))
-    })
-    
-    socket.on('newMessage', (data: MessageType) => {
-        dispatch(addMessage(data))
-    })
+    const [message, setMessage] = useState<string>(''),
+            [textareaPointStart, setTextAreaPointStart] = useState<number>(0),
+            [textareaPointEnd, setTextAreaPointEnd] = useState<number>(0),
+            [showEmojiSelect, setShowEmojiSelect] = useState<boolean>(false),
+            [loggedInUsers, setLoggedInUsers] = useState<string[]>([])
 
     const onMessageChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.currentTarget.value
         setMessage(value)
     }, [])
 
-    const onEmojiClick = useCallback(() => {
-
+    const onBlureEmoji = useCallback(() => {
+        setShowEmojiSelect(false)
+        const txtarea = document.getElementsByTagName('textarea')[0]
+        txtarea.focus()
     }, [])
 
+    const onEmojiClick = useCallback(() => {
+        const txtarea = document.getElementsByTagName('textarea')[0]
+            setTextAreaPointStart(txtarea.selectionStart)
+            setTextAreaPointEnd(txtarea.selectionEnd)
+            setShowEmojiSelect(true)
+    }, [])
+
+    const onEmojiPickerClick = useCallback((event, emojiObject) => {      
+        const txtarea = document.getElementsByTagName('textarea')[0],
+                finText = txtarea.value.substring(0, textareaPointStart) + emojiObject.emoji + txtarea.value.substring(textareaPointEnd)   
+        setMessage(finText)
+        txtarea.focus()     
+        txtarea.selectionEnd = ( textareaPointStart === textareaPointEnd )? (textareaPointEnd + emojiObject.emoji.length) : textareaPointEnd
+        setShowEmojiSelect(false)
+    }, [textareaPointStart, textareaPointEnd])
+
     const onSendClick = useCallback(() => {
-        socket.open().emit('newMessage', {message: message, userName: userName})
-        setMessage('')
+        if (message) {
+            socket.emit('newMessage', { message: message, userName: userName })
+            setMessage('')
+        }
     }, [message, socket, userName])
 
     useEffect(() => {
-        socket = io('ws://localhost:443/', { transports: ['websocket', 'polling', 'flashsocket'] })
+
+        const socket = io('ws://localhost:443/', { transports: ['websocket', 'polling', 'flashsocket'] })
+
+        socket.on('connect', () => {
+            socket.emit('connectedUser', userName)
+        })
+
+        socket.on('connectedUser', data => {
+            data !== userName && setLoggedInUsers(prev => [...prev, data])
+        })
+
+        socket.on("connect_error", (error) => {
+            console.log(error)
+        })
+
+        socket.on('chatHistory', (data: MessageType[]) => {
+            dispatch(loadChat(data))
+        })
+
+        socket.on('newMessage', (data: MessageType) => {
+            dispatch(addMessage(data))
+        })
+
     }, [])
+
+    useEffect(() => {
+        const block = document.getElementById('chatMessagesBlock')
+        block && (block.scrollTop = block.scrollHeight)
+        //@ts-ignore
+        scrollRef.current !== null && scrollRef.current.scrollIntoView(false)
+    }, [messages])
 
     return (
         <section>
-            <div className={s.messages}>
+            <div id={'chatMessagesBlock'} className={s.messages} ref={scrollRef}>
                 {messages.map((x, i) => <Message key={`${x.userName}${i}`} message={x} mine={x.userName === userName} />).reverse()}
             </div>
             <div className={s.sender}>
-                <textarea value={message} onChange={onMessageChange} />
+                <textarea id='textarea' value={message} onChange={onMessageChange} />
                 <div onClick={onEmojiClick}>
                     <img alt="Emodzi" src={emodziIcon} />
                 </div>
                 <div onClick={onSendClick}>
-                    <img alt="Emodzi" src={mail} />
+                    <img alt="Отправить написанное" src={mail} />
                 </div>
+                
+            </div>
+            {showEmojiSelect  && <div className={s.emoji}><div className={s.layout} onClick={onBlureEmoji}></div><EmojiPicker onEmojiClick={onEmojiPickerClick} /></div>}
+            <div className={s.loggedInUsers}>
+                {loggedInUsers.length ? loggedInUsers.map(x => <LoggedInUser key={x} name={x} setLoggedInUsers={setLoggedInUsers} />) : ''}
             </div>
         </section>
     )
