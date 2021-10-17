@@ -64,7 +64,7 @@ const Chat: FC<{}> = ({ }) => {
 
     useEffect(() => {
 
-        const socket = io('ws://localhost:443/', { transports: ['websocket', 'polling', 'flashsocket'] })
+        const socket = io()
 
         socket.on('connect', () => {
             socket.emit('connectedUser', userName)

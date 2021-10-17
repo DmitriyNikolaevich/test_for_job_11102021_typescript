@@ -16,14 +16,15 @@ export type AuthTypeRquest = {
 export const authAPI = createApi({
     reducerPath: 'authAPI',
     baseQuery: fetchBaseQuery({
-      baseUrl: 'https://test-for-job-11102021-ws-node.herokuapp.com'
+      baseUrl: 'https://test-for-job-11102021-ws-node.herokuapp.com/'
     }),
     endpoints: builder => ({
       auth: builder.mutation<AuthTypeResponse, AuthTypeRquest>({
         query: authData => ({
           url: `/auth/${JSON.stringify(authData)}`,
           method: 'GET',
-          mode: 'no-cors'
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' }
         })
       })
     })
