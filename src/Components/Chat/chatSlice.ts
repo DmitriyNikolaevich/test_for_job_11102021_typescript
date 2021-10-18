@@ -4,6 +4,7 @@ import { RootState } from "../../store/store"
 export type MessageType = {
     message: string
     userName: string
+    date: string
 }
 
 interface InitStateTypes {

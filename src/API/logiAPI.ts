@@ -16,7 +16,7 @@ export type AuthTypeRquest = {
 export const authAPI = createApi({
     reducerPath: 'authAPI',
     baseQuery: fetchBaseQuery({
-      baseUrl: 'https://test-for-job-11102021-ws-node.herokuapp.com'
+      baseUrl: 'http://localhost:3600'
     }),
     endpoints: builder => ({
       auth: builder.mutation<AuthTypeResponse, AuthTypeRquest>({

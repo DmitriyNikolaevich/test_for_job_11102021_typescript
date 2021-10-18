@@ -7,7 +7,9 @@
     border-bottom-right-radius: 5px;
     .userName {
         border-bottom: 2px dashed #FFFFFF;
-        padding: 3px;
+        padding: 3px 5px;
+        display: flex;
+        justify-content: space-between;
     }
     .text {
         padding: 5px;

@@ -5,7 +5,7 @@ import withAuthRedirect from '../../HOC/withAuthRedirect'
 import emodziIcon from '../../assets/icons/emodziIcon.svg'
 import mail from '../../assets/icons/mail.svg'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { addMessage, chatSelector, loadChat, MessageType } from './chatSlice'
+import { addMessage, chatSelector, MessageType } from './chatSlice'
 import { loginSelector } from '../Login/loginSlice'
 import { Message } from './Message/Message'
 import { io } from 'socket.io-client'
@@ -17,7 +17,7 @@ const Chat: FC<{}> = ({ }) => {
 
     const dispatch = useAppDispatch()
 
-    const scrollRef = useRef(null)
+    const scrollRef = useRef<HTMLDivElement>(null)
 
     const { messages } = useAppSelector(chatSelector),
         { userName } = useAppSelector(loginSelector)
@@ -57,13 +57,12 @@ const Chat: FC<{}> = ({ }) => {
 
     const onSendClick = useCallback(() => {
         if (message) {
-            socket.emit('newMessage', { message: message, userName: userName })
+            socket.emit('newMessage', { message: message, userName: userName, date: new Date() })
             setMessage('')
         }
     }, [message, socket, userName])
 
     useEffect(() => {
-
         const socket = io('ws://localhost:443/', { transports: ['websocket', 'polling', 'flashsocket'] })
 
         socket.on('connect', () => {
@@ -78,22 +77,16 @@ const Chat: FC<{}> = ({ }) => {
             console.log(error)
         })
 
-        socket.on('chatHistory', (data: MessageType[]) => {
-            dispatch(loadChat(data))
-        })
-
         socket.on('newMessage', (data: MessageType) => {
             dispatch(addMessage(data))
         })
-
     }, [])
 
     useEffect(() => {
         const block = document.getElementById('chatMessagesBlock')
         block && (block.scrollTop = block.scrollHeight)
-        //@ts-ignore
         scrollRef.current !== null && scrollRef.current.scrollIntoView(false)
-    }, [messages])
+    }, [messages, scrollRef])
 
     return (
         <section>
