@@ -6,16 +6,16 @@ import {
     Field
 } from 'formik'
 import { useAuthMutation } from '../../API/logiAPI'
-import { useDispatch, useSelector } from 'react-redux'
 import { loginSelector, setIsAuth, setUserName } from './loginSlice'
 import { useHistory } from 'react-router'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 
-export const Login: FC<{}> = memo(({ }) => {
+export const Login: FC<{ }> = memo(({ }) => {
 
-    const dispatch = useDispatch(),
+    const dispatch = useAppDispatch(),
             history = useHistory()
 
-    const { isAuth } = useSelector(loginSelector)
+    const { isAuth } = useAppSelector(loginSelector)
 
     const [errorMessage, setErrorMessage] = useState<string>('')
 

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useRef, useCallback, useState, useEffect } from 'react'
+import React, { ChangeEvent, FC, useRef, useCallback, useState, useEffect, KeyboardEvent } from 'react'
 import s from './Chat.module.scss'
 import { compose } from 'redux'
 import withAuthRedirect from '../../HOC/withAuthRedirect'
@@ -62,8 +62,16 @@ const Chat: FC<{}> = ({ }) => {
         }
     }, [message, socket, userName])
 
+    const onEnterPress = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if(e.key === 'Enter' && message) {
+            e.preventDefault()
+            socket.emit('newMessage', { message: message, userName: userName, date: new Date() })
+            setMessage('')
+        } 
+    }, [message, socket, userName])
+
     useEffect(() => {
-        const socket = io('ws://localhost:443/', { transports: ['websocket', 'polling', 'flashsocket'] })
+        const socket = io('ws://localhost:443/', { transports: ['websocket'] })
 
         socket.on('connect', () => {
             socket.emit('connectedUser', userName)
@@ -94,7 +102,7 @@ const Chat: FC<{}> = ({ }) => {
                 {messages.map((x, i) => <Message key={`${x.userName}${i}`} message={x} mine={x.userName === userName} />).reverse()}
             </div>
             <div className={s.sender}>
-                <textarea id='textarea' value={message} onChange={onMessageChange} />
+                <textarea id='textarea' value={message} onChange={onMessageChange} onKeyPress={onEnterPress} />
                 <div onClick={onEmojiClick}>
                     <img alt="Emodzi" src={emodziIcon} />
                 </div>

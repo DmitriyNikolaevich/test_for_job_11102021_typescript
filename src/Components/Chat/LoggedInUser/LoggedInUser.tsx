@@ -1,7 +1,7 @@
-import React, { ChangeEvent, FC, memo, useCallback, useState, useEffect } from 'react'
+import React, { FC, memo, useEffect } from 'react'
 import s from './LoggedInUser.module.scss'
 
-export const LoggedInUser: FC<{ name: string, setLoggedInUsers: (value: (prev: string[]) => string[]) => void }> = memo(({ name, setLoggedInUsers }) => {
+export const LoggedInUser: FC<PropTypes> = memo(({ name, setLoggedInUsers }) => {
 
     useEffect(() => {
         setTimeout(() => {
@@ -15,3 +15,8 @@ export const LoggedInUser: FC<{ name: string, setLoggedInUsers: (value: (prev: s
         </div>
     )
 })
+
+type PropTypes = {
+    name: string
+    setLoggedInUsers: (value: (prev: string[]) => string[]) => void
+}

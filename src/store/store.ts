@@ -15,11 +15,6 @@ export const store  = configureStore({
         .concat(authAPI.middleware)
 })
 
-
-
-//@ts-ignore
-window.__store__ = store
-
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
 
