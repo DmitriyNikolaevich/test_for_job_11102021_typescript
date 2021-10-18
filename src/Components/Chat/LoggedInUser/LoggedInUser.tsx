@@ -11,7 +11,7 @@ export const LoggedInUser: FC<{ name: string, setLoggedInUsers: (value: (prev: s
 
     return (
         <div className={s.wrapper}>
-            {name}
+            Пользователь {name} зашел в чат
         </div>
     )
 })
